@@ -1,0 +1,263 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+
+* {
+    font-family: "Poppins", sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#root {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+h4 {
+    color: #ffffffda;
+    font-weight: 100;
+}
+body {
+    background: url("./assets/bg1.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.container {
+    font-size: large;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: min(90%, 900px);
+    gap: 10px;
+}
+
+.main-pane, .tile {
+
+    background: rgba(255, 255, 255, 0.151);
+    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+    backdrop-filter: blur( 50px );
+    -webkit-backdrop-filter: blur( 50px );
+    border-radius: 10px;
+    border: 1.8px solid rgba( 255, 255, 255, 0.18 );
+    box-shadow: 10px 10px 30px 1px #3d00d9;
+}
+
+.main-pane {
+    margin: 10px;
+    background: rgba(255, 255, 255, 0.153);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #ffffff;
+}
+
+.vanish {
+    opacity: 0;
+    transition: opacity 0.3s ease-in;
+}
+
+.show-up {
+    opacity: 1;
+    transition: opacity 0.3s ease-out;
+}
+
+.loading {
+    background-color: #ffffff24;
+    border-radius: 10px;
+    animation: loading 1s ease infinite;
+}
+
+@keyframes loading {
+    0% {
+        background-color: rgba(255, 255, 255, 0.200);
+    } 
+    50% {
+        background-color: #ffffff10;
+    }
+
+    100% {
+        background-color: rgba(255, 255, 255, 0.200);
+    }
+}
+
+
+.temp-val {
+    font-size: 5em;
+    font-weight: 1000;
+}
+
+.temp-val::after {
+    content: "°C";
+    font-size: 0.50em;
+    font-weight: 700;
+    position: relative;
+    bottom: 10px;
+
+}
+h3 {
+    font-size: 2em;
+    color: #fff;
+}
+
+h3::before {
+    content: url("./assets/location.svg");
+    height: 1em;
+    width: 1em;
+}
+
+.temp-val, h3, .descrip {
+    position: relative;
+    bottom: 4rem;
+}
+
+.temp-val {
+    bottom: 3rem;
+}
+
+.descrip {
+    color: #ffffffd0;
+    font-size: 1.5rem;
+}
+
+.country {
+    color: #fff;
+    flex-grow: 1;
+    width: 100%;
+}
+
+.country::before {
+    content: "Place in";
+    color: #ffffff94;
+    padding: 1em;
+    padding-right: 0.3em;
+}
+
+.weather-icon {
+    width: 18rem;
+    height: 18rem;
+}
+
+.side-pane {
+    border-radius: 10px;
+    flex-grow: 1;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    width: 80%;
+    flex-wrap: wrap;
+}
+
+.input {
+    width: 100%;
+    flex-grow: 1;
+    display: flex;
+    column-gap: 10px;
+    padding: 0.5em;
+}
+
+.city-input {
+    border: none; 
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 20px 0 #4503ed;
+    background-color: #ffffffe6;
+    width: 90%;
+    outline: none;
+    border-radius: 40px;
+    font-size: 1.2rem;
+    color: #4503ed;
+    padding: 8px;
+    padding-left: 15px;
+}
+
+.city-input::placeholder {
+    color: #4503ed;
+}
+
+.search-btn {
+    box-shadow: 0 10px 20px 0 #4503ed;
+    width: 45px;
+    border: none;
+    background-color: #ffffff;
+    border-radius: 50%;
+    background-image: url('./assets/search.svg');
+    background-size:cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.search-btn:hover {
+    cursor: pointer;
+}
+
+.tile {
+    border-radius: 10px;
+    display: flex;
+    width: max(45%, 250px);
+    flex-grow: 1;
+    padding: 0.5em;
+    margin: 10px;
+}
+
+.Wind,
+.Humidity, 
+.Rain, 
+.Sunrise ,
+.Sunset, 
+.Feels-like {
+    flex-grow: 1;
+} 
+
+.tile-icon {
+    margin-top: 1rem;
+    margin-right: 0.5rem;
+    width: 4em;
+    height: 4em;
+    animation: icons-floating 1s ease-out infinite;
+}
+
+.tile-data {
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 3.2rem;
+}
+
+.tile-unit {
+    margin-left: 4px;
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: #ffffffc0
+}
+
+@media screen and (max-width: 958px) {
+    .container {
+        flex-wrap: wrap;
+        align-items: start;
+        width: min(600px, 100%);
+    }
+
+    .main-pane {
+        width: 100%;
+    }
+}
+
+@keyframes icons-floating {
+    50% {
+        transform: translateY(5px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+.error {
+    animation: error 1s linear infinite;
+}
+
+@keyframes error {
+    100% {
+        transform: rotate(360deg);
+    }
+}
