@@ -4,7 +4,9 @@ import "./svg-animations.css";
 import sprite from "./assets/iconSprites.svg";
 import WeatherIcon from "./WeatherIcon";
 
-const API_KEY = import.meta.env.API_KEY;
+// To prevent accidentally leaking env variables to the client, only variables prefixed with VITE_ are exposed to your Vite-processed code.
+const API_KEY = import.meta.env.VITE_API_KEY;
+
 const chars = { "Feels-like": "°C", Wind: "m/s", Humidity: "%", Rain: "mm", Sunrise: "AM", Sunset: "PM" };
 const countryCode = {
     AF: "Afghanistan",
