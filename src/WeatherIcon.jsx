@@ -1404,10 +1404,10 @@ function IconCode({ code }) {
     }
 }
 
-function WeatherIcon({ iconCode }) {
+function WeatherIcon({ iconCode, small }) {
     var error = iconCode == " " ? " error" : ""
     return (
-        <svg viewBox="8 10 50 50" className={"weather-icon" + error}>
+        <svg viewBox="8 10 50 50" className={"weather-icon" + error + small}>
             <IconCode code={iconCode} />
         </svg>
     );

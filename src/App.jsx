@@ -3,6 +3,7 @@ import "./App.css";
 import "./svg-animations.css";
 import sprite from "./assets/iconSprites.svg";
 import WeatherIcon from "./WeatherIcon";
+import Next5Days from "./NextDays"
 
 // To prevent accidentally leaking env variables to the client, only variables prefixed with VITE_ are exposed to your Vite-processed code.
 const API_KEY = import.meta.env.VITE_API_KEY;
@@ -257,7 +258,11 @@ const countryCode = {
     ZW: "Zimbabwe",
 };
 
+
 function MainPane({info, isLoading}) {
+    var currdate = new Date();
+    var [day, month] = [currdate.toLocaleString('default', { weekday: 'long' }), currdate.toLocaleString('default', { month: 'long' })];
+    var date_str = `${day}, ${currdate.getDate()} ${month}`
     var [vanish, load, icon] = ["show-up" ,"", info.weatherIcon];
     if (isLoading) {
         var vanish = "vanish";
@@ -266,7 +271,8 @@ function MainPane({info, isLoading}) {
     }
     return (
         <div className={"main-pane "+load}>
-            <WeatherIcon iconCode={icon} />
+            <span className="date">{date_str}</span>
+            <WeatherIcon iconCode={icon} small = {""}/>
             <span className={"temp-val "+vanish}>{Math.round(info.temperature)}</span>
             <h3 className={vanish}>{info.location}</h3>
             <span className={"descrip "+vanish}>{info.description}</span>
@@ -412,8 +418,11 @@ function ReactWeather() {
     }
     return (
         <div className="container">
-            <MainPane info={mainpaneInfo} isLoading = {loading} />
-            <SidePane searchfunc={fetchData} info={sidepaneInfo} isLoading = {loading}/>
+            <div className="curr-weather">
+                <MainPane info={mainpaneInfo} isLoading = {loading} />
+                <SidePane searchfunc={fetchData} info={sidepaneInfo} isLoading = {loading}/>
+            </div>
+            <Next5Days />
         </div>
     );
 }
