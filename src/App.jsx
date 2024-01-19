@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import "./svg-animations.css";
 import sprite from "./assets/iconSprites.svg";
 import WeatherIcon from "./WeatherIcon";
-import Next5Days from "./NextDays"
+import Next5Days from "./NextDays";
 
 // To prevent accidentally leaking env variables to the client, only variables prefixed with VITE_ are exposed to your Vite-processed code.
 const API_KEY = import.meta.env.VITE_API_KEY;
@@ -258,24 +258,26 @@ const countryCode = {
     ZW: "Zimbabwe",
 };
 
-
-function MainPane({info, isLoading}) {
+function MainPane({ info, isLoading }) {
     var currdate = new Date();
-    var [day, month] = [currdate.toLocaleString('default', { weekday: 'long' }), currdate.toLocaleString('default', { month: 'long' })];
-    var date_str = `${day}, ${currdate.getDate()} ${month}`
-    var [vanish, load, icon] = ["show-up" ,"", info.weatherIcon];
+    var [day, month] = [
+        currdate.toLocaleString("default", { weekday: "long" }),
+        currdate.toLocaleString("default", { month: "long" }),
+    ];
+    var date_str = `${day}, ${currdate.getDate()} ${month}`;
+    var [vanish, load, icon] = ["show-up", "", info.weatherIcon];
     if (isLoading) {
         var vanish = "vanish";
         var load = "loading";
         icon = "";
     }
     return (
-        <div className={"main-pane "+load}>
-            <span className="date">{date_str}</span>
-            <WeatherIcon iconCode={icon} small = {""}/>
-            <span className={"temp-val "+vanish}>{Math.round(info.temperature)}</span>
+        <div className={"main-pane " + load}>
+            <span className={"date " + vanish}>{date_str}</span>
+            <WeatherIcon iconCode={icon} small={""} />
+            <span className={"temp-val " + vanish}>{Math.round(info.temperature)}</span>
             <h3 className={vanish}>{info.location}</h3>
-            <span className={"descrip "+vanish}>{info.description}</span>
+            <span className={"descrip " + vanish}>{info.description}</span>
         </div>
     );
 }
@@ -284,16 +286,16 @@ function Tile({ icon, val, property, toLoad }) {
     var [load, vanish] = ["", " show-up"];
     if (toLoad) {
         load = " loading";
-        vanish = " vanish"
+        vanish = " vanish";
     }
     return (
-        <div className={"tile"+load}>
+        <div className={"tile" + load}>
             <div className={property}>
                 <h4 className={vanish}>{property.replace("-", " ")}</h4>
-                <span className={"tile-data"+vanish}>{val}</span>
-                <span className={"tile-unit"+vanish}>{chars[property]}</span>
+                <span className={"tile-data" + vanish}>{val}</span>
+                <span className={"tile-unit" + vanish}>{chars[property]}</span>
             </div>
-            <svg className="tile-icon">
+            <svg className={"tile-icon" + vanish}>
                 <use xlinkHref={sprite + `#${icon}`} />
             </svg>
         </div>
@@ -315,15 +317,16 @@ function SidePane({ info, searchfunc, isLoading }) {
         <div className="side-pane">
             <div className="input">
                 <input
+                    defaultValue={"Kolkata"}
                     type="text"
                     className="city-input"
-                    placeholder="Search"
-                    onKeyDown={handleKeyDown}
+                    placeholder="Search Places around the world"
+                    onKeyDown={(e) => handleKeyDown(e)}
                     spellCheck={false}
                 />
-                <button className="search-btn" onClick={searchfunc} />
+                <button className="search-btn" onClick={() => searchfunc()} />
             </div>
-            <span className={"country"+vanish}>{info.country}</span>
+            <span className={"country" + vanish}>{info.country}</span>
             <Tile toLoad={load} icon={"temperature"} val={info.temperature} property={"Feels-like"} />
             <Tile toLoad={load} icon={"wind"} val={info.wind} property={"Wind"} />
             <Tile toLoad={load} icon={"humidity"} val={info.humidity} property={"Humidity"} />
@@ -345,10 +348,9 @@ function to12hrTime(timestamp) {
 function ReactWeather() {
     const [mainpaneInfo, setMainpaneInfo] = useState({
         temperature: 0,
-        weatherIcon: "01d",
-        location: "Location",
-        description: "description",
-        country: "country",
+        weatherIcon: " ",
+        location: -1,
+        description: "Does not exist",
     });
     const [sidepaneInfo, setSidepaneInfo] = useState({
         temperature: 0,
@@ -357,20 +359,38 @@ function ReactWeather() {
         rain: 0,
         sunrise: 0,
         sunset: 0,
-        country: "Country",
+        country: "Undefined",
     });
-
+    const [nextDaysInfo, setNextDaysInfo] = useState(null);
     const [loading, setLoading] = useState(false);
+    // const [city, setcity] = useState("kolkata");
 
     async function fetchData() {
+        // console.log("1. I am called just");
         const input = document.getElementsByClassName("city-input");
-        let city = input[0].value;
+        // console.log("2. Previous city: ", input);
+        var city = "Kolkata";
+        if (input.length !== 0) {
+            // console.log("3.0 prev city value: ", city);
+            // console.log("3.0.0 city new value: ", input[0].value);
+            city = input[0].value;
+            // console.log("3.1 curr city value: ", city);
+        } else {
+            // console.log("3.x Nothing was there lol, what to do?");
+        }
+
         if (city !== "") {
+            // console.log("3.2 Oh we have got something: ", city);
             setLoading(true);
             try {
-                let URL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`;
-                var response = await fetch(URL);
-                var currInfo = await response.json();
+                const URL1 = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`;
+                const URL2 = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric`;
+                var response1 = await fetch(URL1);
+                var currInfo = await response1.json();
+                var response2 = await fetch(URL2);
+                var nextdayInfo = await response2.json();
+
+                setNextDaysInfo(nextdayInfo.list);
 
                 // sidepane info update
                 let sideInfo = {};
@@ -385,7 +405,7 @@ function ReactWeather() {
                 sideInfo.sunrise = to12hrTime(currInfo.sys.sunrise);
                 sideInfo.sunset = to12hrTime(currInfo.sys.sunset);
                 sideInfo.country = countryCode[currInfo.sys.country];
-                
+
                 // mainpane info update
                 let mainInfo = {};
                 mainInfo.temperature = currInfo.main.temp;
@@ -394,7 +414,9 @@ function ReactWeather() {
                 mainInfo.weatherIcon = currInfo.weather[0].icon;
                 setSidepaneInfo(sideInfo);
                 setMainpaneInfo(mainInfo);
+                // console.log("4. Updation done. Location: ", mainInfo.location);
             } catch {
+                // console.log("4.1: Error happened here", city);
                 setMainpaneInfo({
                     temperature: 0,
                     weatherIcon: " ",
@@ -410,19 +432,29 @@ function ReactWeather() {
                     sunset: 0,
                     country: "Undefined",
                 });
+                setNextDaysInfo(null);
             } finally {
                 setLoading(false);
-                return;
             }
+            // console.log("6. Good bye see again");
+            return;
         }
     }
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
     return (
         <div className="container">
-            <div className="curr-weather">
-                <MainPane info={mainpaneInfo} isLoading = {loading} />
-                <SidePane searchfunc={fetchData} info={sidepaneInfo} isLoading = {loading}/>
+            <div className={"loading-page " + (mainpaneInfo.location === -1 ? "show-up" : "vanish")} />
+            <div className={"container " + (mainpaneInfo.location !== -1 ? "show-up" : "vanish")}>
+                <div className="curr-weather">
+                    <MainPane info={mainpaneInfo} isLoading={loading} />
+                    <SidePane searchfunc={fetchData} info={sidepaneInfo} isLoading={loading} />
+                </div>
+                <Next5Days info={nextDaysInfo} isLoading={loading}/>
             </div>
-            <Next5Days />
         </div>
     );
 }
