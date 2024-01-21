@@ -332,6 +332,7 @@ h3,
 
 .dtab-active,
 .dtab-inactive {
+    font-size: 1rem;
     border: none;
     background: linear-gradient(137deg, #d101f5, #4503ed);
     box-shadow: 2px 2px 15px 3px #5204b39f;

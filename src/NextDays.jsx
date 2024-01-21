@@ -59,11 +59,29 @@ function plotThisNow(obj, param) {
     return data;
 }
 
-const options = {};
+Chart.defaults.font.size = 16;
+const options = {
+    plugins: {
+        legend: {
+            display: false,
+        },
+        tooltip: {
+            mode: "index",
+            intersect: false,
+        },
+    },
+    hover: {
+        mode: "nearest",
+        intersect: false,
+    },
+};
 
 function DateTab({ day, temp_min, temp_max, wid, changeGraphData, isactive, load }) {
     return (
-        <button className={`dtab-${isactive ? "" : "in"}active ${load ? "vanish" : "show-up"}`} onClick={() => changeGraphData(day)}>
+        <button
+            className={`dtab-${isactive ? "" : "in"}active ${load ? "vanish" : "show-up"}`}
+            onClick={() => changeGraphData(day)}
+        >
             <h4>{day === currDayname ? "Today" : day}</h4>
             <WeatherIcon iconCode={wid} small=" smaller-wicon" />
             <div className="min-max">
@@ -76,7 +94,7 @@ function DateTab({ day, temp_min, temp_max, wid, changeGraphData, isactive, load
 
 function DateTabs({ dateTabsInfo, changeGraphData, active, loading }) {
     return (
-        <div className={"date-tabs " + (loading ? "loading":"")}>
+        <div className={"date-tabs " + (loading ? "loading" : "")}>
             {dateTabsInfo.map((data) => (
                 <DateTab
                     key={data.day}
@@ -86,7 +104,7 @@ function DateTabs({ dateTabsInfo, changeGraphData, active, loading }) {
                     wid={data.icon}
                     changeGraphData={changeGraphData}
                     isactive={data.day === active}
-                    load = {loading}
+                    load={loading}
                 />
             ))}
         </div>
@@ -112,10 +130,10 @@ function LineGraph({ lineGraphInfo, loading }) {
         setactive(newParameter);
     }
 
-    var load = loading ? "vanish" : "show-up"
+    var load = loading ? "vanish" : "show-up";
 
     return (
-        <div className={"chart-wrapper-wrapper-wrapper " + (loading ? "loading":"")}>
+        <div className={"chart-wrapper-wrapper-wrapper " + (loading ? "loading" : "")}>
             <div className={"params " + load}>
                 <Param isactive={active === "temperature"} plotGraph={plotGraph} icon={"temperature"} />
                 <Param isactive={active === "humidity"} plotGraph={plotGraph} icon={"humidity"} />
@@ -144,14 +162,20 @@ function getDateTabsInfo(info) {
     var res = [];
     var newd = {};
     for (let data of info) {
-        if (res.length == 0 || getDayName(data.dt_txt.slice(0, 10)) != res[res.length - 1].day) {
-            newd.day = getDayName(data.dt_txt.slice(0, 10));
+        let dataday = getDayName(data.dt_txt.slice(0, 10));
+        if (res.length == 0 || dataday != res[res.length - 1].day) {
+            newd.day = dataday;
             newd.icon = data.weather[0].icon;
             newd.temp_min = data.main.temp_min;
             newd.temp_max = data.main.temp_max;
             res.push({ ...newd });
+        } else if (dataday === res[res.length - 1].day && data.dt_txt.includes("09:00:00")) {
+            res[res.length - 1].icon = data.weather[0].icon;
+            res[res.length - 1].temp_min = data.main.temp_min;
+            res[res.length - 1].temp_max = data.main.temp_max;
         }
     }
+    console.log(res);
     return res;
 }
 
