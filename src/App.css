@@ -443,7 +443,7 @@ button {
 }
 *::-webkit-scrollbar-button,
 *::-webkit-scrollbar-corner {
-    background-color: rgba(0, 128, 0, 0);
+    display: none;
 }
 
 .loading-page {
